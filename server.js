@@ -24,12 +24,12 @@
 const PORT = process.env.PORT || 8000;
 
 const options = { 
-  transports: [ "websocket"]
+  transports: [ "websocket" ]
 };
 
 const
     {Server} = require("socket.io"),
-    server = new Server(PORT);
+    server = new Server(PORT, options);
 
 let
     sequenceNumberByClient = new Map();
