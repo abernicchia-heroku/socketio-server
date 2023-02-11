@@ -23,6 +23,9 @@
 
 const PORT = process.env.PORT || 8000;
 
+const options = { 
+  transports: [ "websocket"]
+};
 
 const
     {Server} = require("socket.io"),
