@@ -26,7 +26,7 @@ const PORT = process.env.PORT || 8000;
 
 const
     {Server} = require("socket.io"),
-    server = new Server(${PORT});
+    server = new Server(PORT);
 
 let
     sequenceNumberByClient = new Map();
