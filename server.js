@@ -40,6 +40,11 @@ server.on("connection", (socket) => {
     sequenceNumberByClient.set(socket, 1);
     console.info(`Client connected [id=${socket.id}] clients: ${sequenceNumberByClient.size}`);
 
+    socket.on("c2s-event", (data) => {
+        console.info(`Client2Server event [id=${socket.id}] data: ${data}`);
+        socket.emit("seq-num", 1234567890);
+    });
+
     // when socket disconnects, remove it from the list:
     socket.on("disconnect", () => {
         sequenceNumberByClient.delete(socket);
