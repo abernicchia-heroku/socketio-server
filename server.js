@@ -42,7 +42,7 @@ server.on("connection", (socket) => {
 
     socket.on("c2s-event", (data) => {
         console.info(`Client2Server event [id=${socket.id}] data: ${data}`);
-        socket.emit("seq-num", 1234567890);
+        socket.emit("seq-num", data);
     });
 
     // when socket disconnects, remove it from the list:
