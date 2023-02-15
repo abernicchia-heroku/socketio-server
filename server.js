@@ -23,19 +23,32 @@
 
 const PORT = process.env.PORT || 8000;
 
+import { Server } from "socket.io";
+import { createAdapter } from "@socket.io/redis-adapter";
+import { createClient } from "redis";
+
 const options = { 
   transports: [ "websocket" ]
 };
 
-const
-    {Server} = require("socket.io"),
-    server = new Server(PORT, options);
+const io = new Server(PORT, options);
+
+if (process.env.REDIS_URL) {
+  console.info(`Using Redis ${process.env.REDIS_URL}`);
+
+  const pubClient = createClient({ url: process.env.REDIS_URL });
+  const subClient = pubClient.duplicate();
+
+  Promise.all([pubClient.connect(), subClient.connect()]).then(() => {
+    io.adapter(createAdapter(pubClient, subClient));
+  });
+}
 
 let
     sequenceNumberByClient = new Map();
 
 // event fired every time a new client connects:
-server.on("connection", (socket) => {
+io.on("connection", (socket) => {
     // initialize this client's sequence number
     sequenceNumberByClient.set(socket, 1);
     console.info(`Client connected [id=${socket.id}] clients: ${sequenceNumberByClient.size}`);
