@@ -45,6 +45,11 @@ if (process.env.REDIS_URL) {
   });
   const subClient = pubClient.duplicate();
 
+  // to avoid "missing 'error' handler on this Redis client"
+  pubClient.on("error", (err) => {
+    console.log(err);
+  });
+
   Promise.all([pubClient.connect(), subClient.connect()]).then(() => {
     io.adapter(createAdapter(pubClient, subClient));
   });
@@ -78,3 +83,9 @@ setInterval(() => {
         sequenceNumberByClient.set(client, sequenceNumber + 1);
     }
 }, 1000);
+
+// broadcast a message to all the clients
+setInterval(() => {
+  console.info(`Broadcasting ...`);
+  io.emit(`s2c-event`, `server broadcast message - from: ${process.env.DYNO}`);
+}, 2000);
