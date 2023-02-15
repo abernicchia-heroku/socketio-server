@@ -36,7 +36,13 @@ const io = new Server(PORT, options);
 if (process.env.REDIS_URL) {
   console.info(`Using Redis ${process.env.REDIS_URL}`);
 
-  const pubClient = createClient({ url: process.env.REDIS_URL });
+  const pubClient = createClient({ 
+    url: process.env.REDIS_URL,
+    socket: {
+      tls: true,
+      rejectUnauthorized: false
+    }     
+  });
   const subClient = pubClient.duplicate();
 
   Promise.all([pubClient.connect(), subClient.connect()]).then(() => {
