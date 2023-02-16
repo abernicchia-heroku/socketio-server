@@ -1,38 +1,24 @@
-// 'use strict';
-
-// const express = require('express');
-// const socketIO = require('socket.io');
-
-// const PORT = process.env.PORT || 3000;
-// const INDEX = '/index.html';
-
-// const server = express()
-//   .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
-//   .listen(PORT, () => console.log(`Listening on ${PORT}`));
-
-// const io = socketIO(server);
-
-// io.on('connection', (socket) => {
-//   console.log('Client connected');
-//   socket.on('disconnect', () => console.log('Client disconnected'));
-// });
-
-// setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
-
-
-
-const PORT = process.env.PORT || 8000;
+// Code based on socket.io examples and https://gist.github.com/luciopaiva/e6f60bd6e156714f0c5505c2be8e06d8, adapted to run locally and on Heroku
 
 import { Server } from "socket.io";
 import { createAdapter } from "@socket.io/redis-adapter";
 import { createClient } from "redis";
 
+const PORT = process.env.PORT || 3000;
+const CONTAINERNAME = process.env.DYNO || "local";
+const SERVERID = `${CONTAINERNAME}-` + Math.floor(Math.random() * 1000000);
+
+const SERVER2CLIENT_MESSAGE_INTERVAL_MSECS = process.env.SERVER2CLIENT_MESSAGE_INTERVAL_MSECS || 1000;
+const BROADCAST_MESSAGE_INTERVAL_MSECS = process.env.BROADCAST_MESSAGE_INTERVAL_MSECS || 2000;
+
+
 const options = { 
   transports: [ "websocket" ]
 };
 
-const io = new Server(PORT, options);
+const io = new Server(options);
 
+// if a Redis instance is available
 if (process.env.REDIS_URL) {
   console.info(`Using Redis ${process.env.REDIS_URL}`);
 
@@ -45,7 +31,7 @@ if (process.env.REDIS_URL) {
   });
   const subClient = pubClient.duplicate();
 
-  // to avoid "missing 'error' handler on this Redis client"
+  // to avoid socket.io "missing 'error' handler on this Redis client" warning
   pubClient.on("error", (err) => {
     console.log(err);
   });
@@ -55,10 +41,9 @@ if (process.env.REDIS_URL) {
   });
 }
 
-let
-    sequenceNumberByClient = new Map();
+let sequenceNumberByClient = new Map();
 
-// event fired every time a new client connects:
+// event fired every time a new client connects
 io.on("connection", (socket) => {
     // initialize this client's sequence number
     sequenceNumberByClient.set(socket, 1);
@@ -66,15 +51,18 @@ io.on("connection", (socket) => {
 
     socket.on("c2s-event", (data) => {
         console.info(`Client2Server event [id=${socket.id}] data: ${data}`);
-        socket.emit("seq-num", data);
+        socket.emit("s2c-event", data);
     });
 
     // when socket disconnects, remove it from the list:
     socket.on("disconnect", () => {
         sequenceNumberByClient.delete(socket);
-        console.info(`Client gone [id=${socket.id}] clients: ${sequenceNumberByClient.size}`);
+        console.info(`Client disconnected [id=${socket.id}] clients: ${sequenceNumberByClient.size}`);
     });
 });
+
+console.info(`Listening on PORT ${PORT}`);
+io.listen(PORT);
 
 // sends each client its current sequence number
 setInterval(() => {
@@ -82,10 +70,12 @@ setInterval(() => {
         client.emit("seq-num", sequenceNumber);
         sequenceNumberByClient.set(client, sequenceNumber + 1);
     }
-}, 1000);
+}, SERVER2CLIENT_MESSAGE_INTERVAL_MSECS);
 
-// broadcast a message to all the clients
+// broadcast a message to all clients. With Redis all clients are notified even if not directly coonected to this socket.io server instance (e.g. multiple nodejs processes or multiple dynos)
 setInterval(() => {
-  console.info(`Broadcasting ...`);
-  io.emit(`s2c-event`, `server broadcast message - from: ${process.env.DYNO}`);
-}, 2000);
+  if(sequenceNumberByClient.size > 0) {
+    console.info(`Broadcasting ...`);
+    io.emit(`s2c-event`, `server broadcast message - from: ${SERVERID}`);
+  }
+}, BROADCAST_MESSAGE_INTERVAL_MSECS);
