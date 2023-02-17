@@ -19,6 +19,8 @@ The server listens for **c2s-event** events from the clients, emits **seq-num** 
 
 Use the following Heroku Button to create an application on a Private Space, all the required add-ons and configuration variables will be created automatically.
 
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
 Otherwise, use the following procedure to deploy the application manually:
 
 1. git clone https://github.com/abernicchia-heroku/socketio-server.git
