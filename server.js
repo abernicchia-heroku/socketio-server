@@ -28,7 +28,11 @@ function start() {
     console.info(`Using Redis ${process.env.REDIS_URL}`);
 
     const pubClient = createClient({ 
-      url: process.env.REDIS_URL    
+      url: process.env.REDIS_URL,
+      socket: {
+        tls: true,
+        rejectUnauthorized: false
+      }     
     });
     const subClient = pubClient.duplicate();
 
