@@ -1,11 +1,11 @@
 {
-  "name": "websockets-socket.io",
+  "name": "socket.io-server",
   "version": "1.0.0",
   "engines": {
     "node": "18.x"
   },
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },

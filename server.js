@@ -1,5 +1,5 @@
-// Code based on socket.io examples and https://gist.github.com/luciopaiva/e6f60bd6e156714f0c5505c2be8e06d8, adapted to run locally and on Heroku, both on Common Runtime and Private Spaces
-// It uses Websocket transport protocol and not long-polling as the latter is not supported by Private Spaces as session affinity feature is not available yet. 
+// Code based on socket.io examples and https://gist.github.com/luciopaiva/e6f60bd6e156714f0c5505c2be8e06d8, adapted to run locally or on Heroku, both on Common Runtime and Private Spaces
+// It uses Websocket-only transport protocol and not long-polling as the latter is not supported by Private Spaces as session affinity feature is not available yet. 
 // Multiple server nodes (e.g. nodejs cluster or multiple dynos) are supported with the use of Redis adapater, in this way broadcast events can be sent to all clients connected across different processes/dynos 
 
 import { Server } from "socket.io";
@@ -24,7 +24,6 @@ function start() {
 
   const io = new Server(options);
 
-  // if a Redis instance is available
   if (process.env.REDIS_URL) {
     console.info(`Using Redis ${process.env.REDIS_URL}`);
 
@@ -46,6 +45,9 @@ function start() {
       io.adapter(createAdapter(pubClient, subClient));
     });
   }
+  else {
+      console.warn(`Redis not configured, broadcast events will reach only clients connected directly to the server that is broadcasting`);
+  }
 
   let sequenceNumberByClient = new Map();
 
@@ -60,7 +62,7 @@ function start() {
           socket.emit("s2c-event", data);
       });
 
-      // when socket disconnects, remove it from the list:
+      // when socket disconnects, remove it from the list
       socket.on("disconnect", () => {
           sequenceNumberByClient.delete(socket);
           console.info(`Client disconnected [id=${socket.id}] serverID: ${SERVERID} clients: ${sequenceNumberByClient.size}`);
