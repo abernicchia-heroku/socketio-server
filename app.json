@@ -19,7 +19,8 @@
     },    
     "WEB_CONCURRENCY": {
       "description": "The number of processes / socket.io servers to run within the same dyno / container",
-      "value": "1"
+      "value": "1",
+      "required": "false"
     }
   },
   "formation": {
@@ -30,7 +31,7 @@
   },
   "image": "heroku/nodejs",
   "addons": [
-    "heroku-redis",
+    "heroku-redis:private-7",
     "papertrail"
   ]
 }
