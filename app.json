@@ -10,15 +10,15 @@
   "repository": "https://github.com/abernicchia-heroku/socketio-server",
   "env": {
     "SERVER2CLIENT_MESSAGE_INTERVAL_MSECS": {
-      "description": "Server to clients message emit frequency in milliseconds.",
+      "description": "Server to clients message emit frequency in milliseconds",
       "value": "1000"
     },
     "BROADCAST_MESSAGE_INTERVAL_MSECS": {
-      "description": "Broadcast events frequency in milliseconds.",
-      "value": "1000"
+      "description": "Broadcast events frequency in milliseconds",
+      "value": "2000"
     },    
     "WEB_CONCURRENCY": {
-      "description": "The number of processes / socket.io servers to run within the same dyno / container",
+      "description": "The number of processes / socket.io servers to run within the same dyno",
       "value": "1",
       "required": false
     }
