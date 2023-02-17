@@ -20,7 +20,7 @@
     "WEB_CONCURRENCY": {
       "description": "The number of processes / socket.io servers to run within the same dyno / container",
       "value": "1",
-      "required": "false"
+      "required": false
     }
   },
   "formation": {
