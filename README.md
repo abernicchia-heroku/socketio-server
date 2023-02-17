@@ -24,15 +24,15 @@ Use the following Heroku Button to create an application on a Private Space, all
 Otherwise, use the following procedure to deploy the application manually:
 
 ```
-1. git clone https://github.com/abernicchia-heroku/socketio-server.git
-2. cd socketio-server
-3. heroku create
-4. heroku addons:create heroku-redis
-5. heroku addons:create papertrail (optional)
-6. git add .
-7. git commit -m "starting point"
-8. git push heroku main
-9. heroku ps:scale web=1
+git clone https://github.com/abernicchia-heroku/socketio-server.git
+cd socketio-server
+heroku create
+heroku addons:create heroku-redis
+heroku addons:create papertrail (optional)
+git add .
+git commit -m "starting point"
+git push heroku main
+heroku ps:scale web=1
 ```
 
 ## Environment variables configuration
