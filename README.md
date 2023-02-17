@@ -28,7 +28,7 @@ git clone https://github.com/abernicchia-heroku/socketio-server.git
 cd socketio-server
 heroku create
 heroku addons:create heroku-redis
-heroku addons:create papertrail (optional)
+heroku addons:create papertrail
 git add .
 git commit -m "starting point"
 git push heroku main
