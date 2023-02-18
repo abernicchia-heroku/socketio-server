@@ -34,7 +34,11 @@
       "size": "private-s"
     }
   },
-  "image": "heroku/nodejs",
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
   "addons": [
     "heroku-redis:private-7",
     "papertrail"
