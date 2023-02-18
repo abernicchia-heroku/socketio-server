@@ -26,8 +26,8 @@ Otherwise, use the following procedure to deploy the application manually:
 ```
 git clone https://github.com/abernicchia-heroku/socketio-server.git
 cd socketio-server
-heroku create
-heroku addons:create heroku-redis
+heroku create <app name> --space=<Private Space name>
+heroku addons:create heroku-redis:private-7
 heroku addons:create papertrail
 git add .
 git commit -m "starting point"
