@@ -21,13 +21,25 @@ Use the following Heroku Button to create an application on a Private Space, all
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
-Otherwise, use the following procedure to deploy the application manually:
+Otherwise, use the following procedure to deploy the application manually on a Private Space or on the Common Runtime:
 
 ```
+// Private Space
 git clone https://github.com/abernicchia-heroku/socketio-server.git
 cd socketio-server
 heroku create <app name> --space=<Private Space name>
-heroku addons:create heroku-redis:private-7
+heroku addons:create heroku-redis:private-7 // wait until the add-on is created using: heroku addons:info <Redis add-on name>
+heroku addons:create papertrail
+git add .
+git commit -m "starting point"
+git push heroku main
+heroku ps:scale web=1
+
+// Common Runtime
+git clone https://github.com/abernicchia-heroku/socketio-server.git
+cd socketio-server
+heroku create <app name>
+heroku addons:create heroku-redis // wait until the add-on is created using: heroku addons:info <Redis add-on name>
 heroku addons:create papertrail
 git add .
 git commit -m "starting point"
