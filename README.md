@@ -39,7 +39,7 @@ heroku ps:scale web=1
 git clone https://github.com/abernicchia-heroku/socketio-server.git
 cd socketio-server
 heroku create <app name>
-heroku addons:create heroku-redis // wait until the add-on is created using: heroku addons:info <Redis add-on name>
+heroku addons:create heroku-redis:premium-0 // wait until the add-on is created using: heroku addons:info <Redis add-on name>
 heroku addons:create papertrail
 git add .
 git commit -m "starting point"
