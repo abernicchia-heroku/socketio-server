@@ -5,7 +5,8 @@
 import { Server } from "socket.io";
 import { createAdapter } from "@socket.io/redis-adapter";
 import { createClient } from "redis";
-import throng from 'throng'
+import throng from "throng";
+import winston from "winston";
 
 const WORKERS = process.env.WEB_CONCURRENCY || 1;
 const PORT = process.env.PORT || 3000;
@@ -13,8 +14,13 @@ const CONTAINERNAME = process.env.DYNO || "local";
 const SERVERID = `${CONTAINERNAME}-` + Math.floor(Math.random() * 1000000);
 
 const SERVER2CLIENT_MESSAGE_INTERVAL_MSECS = process.env.SERVER2CLIENT_MESSAGE_INTERVAL_MSECS || 1000;
-const BROADCAST_MESSAGE_INTERVAL_MSECS = process.env.BROADCAST_MESSAGE_INTERVAL_MSECS || 2000;
+const BROADCAST_MESSAGE_INTERVAL_MSECS = process.env.BROADCAST_MESSAGE_INTERVAL_MSECS || 5000;
 
+const logger = winston.createLogger({
+  level: process.env.LOG_LEVEL || 'info',
+  format: winston.format.simple(),
+  transports: [new winston.transports.Console()]
+});
 
 function start() {
 
@@ -25,7 +31,7 @@ function start() {
   const io = new Server(options);
 
   if (process.env.REDIS_URL) {
-    console.info(`Using Redis ${process.env.REDIS_URL}`);
+    logger.info(`Using Redis ${process.env.REDIS_URL}`);
 
     const pubClient = createClient({ 
       url: process.env.REDIS_URL,
@@ -38,7 +44,7 @@ function start() {
 
     // to avoid socket.io "missing 'error' handler on this Redis client" warning
     pubClient.on("error", (err) => {
-      console.log(err);
+      logger.error(err);
     });
 
     Promise.all([pubClient.connect(), subClient.connect()]).then(() => {
@@ -46,7 +52,7 @@ function start() {
     });
   }
   else {
-      console.warn(`Redis not configured, broadcast events will reach only clients connected directly to the server that is broadcasting`);
+      logger.warn(`Redis not configured, broadcast events will reach only clients connected directly to the server that is broadcasting`);
   }
 
   let sequenceNumberByClient = new Map();
@@ -55,21 +61,21 @@ function start() {
   io.on("connection", (socket) => {
       // initialize this client's sequence number
       sequenceNumberByClient.set(socket, 1);
-      console.info(`Client connected [id=${socket.id}] serverID: ${SERVERID} clients: ${sequenceNumberByClient.size}`);
+      logger.info(`Client connected [id=${socket.id}] serverID: ${SERVERID} clients: ${sequenceNumberByClient.size}`);
 
       socket.on("c2s-event", (data) => {
-          console.info(`Client2Server event [id=${socket.id}] data: ${data}`);
+          logger.debug(`client2server event [id=${socket.id}] data: ${data}`);
           socket.emit("s2c-event", data);
       });
 
       // when socket disconnects, remove it from the list
       socket.on("disconnect", () => {
           sequenceNumberByClient.delete(socket);
-          console.info(`Client disconnected [id=${socket.id}] serverID: ${SERVERID} clients: ${sequenceNumberByClient.size}`);
+          logger.info(`Client disconnected [id=${socket.id}] serverID: ${SERVERID} clients: ${sequenceNumberByClient.size}`);
       });
   });
 
-  console.info(`Listening on PORT: ${PORT} serverID: ${SERVERID}`);
+  logger.info(`Listening on PORT: ${PORT} serverID: ${SERVERID}`);
   io.listen(PORT);
 
   // sends each client its current sequence number
@@ -83,7 +89,7 @@ function start() {
   // broadcast a message to all clients. With Redis all clients are notified even if not directly coonected to this socket.io server instance
   setInterval(() => {
     if(sequenceNumberByClient.size > 0) {
-      console.info(`Broadcasting ...`);
+      logger.debug(`Broadcasting ...`);
       io.emit(`s2c-event`, `server broadcast message - from: ${SERVERID}`);
     }
   }, BROADCAST_MESSAGE_INTERVAL_MSECS);

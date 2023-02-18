@@ -21,6 +21,11 @@
       "description": "The number of processes / socket.io servers to run within the same dyno",
       "value": "1",
       "required": false
+    },    
+    "LOG_LEVEL": {
+      "description": "Log level",
+      "value": "info",
+      "required": false
     }
   },
   "formation": {

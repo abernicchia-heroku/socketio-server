@@ -47,7 +47,9 @@ The following configuration variables are used by the application:
 
 ## Test
 
-You can test your server using any socket.io compatible client like this compound multi-client that allows you to create multiple parallel sessions and it is able to handle the events sent/received by the server.
+You can test your server using any socket.io compatible client like this compound [multi-client](https://github.com/abernicchia-heroku/socketio-multiclient) that creates multiple parallel websocket sessions and is able to handle the events sent/received by the server.
+
+It's possible to enable debug messages (e.g. when events are emitted or received) setting LOG_LEVEL=debug.
 
 
 
