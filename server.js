@@ -27,7 +27,7 @@ const logger = winston.createLogger({
 function start() {
 
   const options = { 
-    transports: [ "websocket" ],
+    transports: [ "websocket", "polling" ],
     cors: {
       origin: "https://admin.socket.io"
     }
