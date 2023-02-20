@@ -27,7 +27,7 @@ const logger = winston.createLogger({
 function start() {
 
   const options = { 
-    transports: [ "websocket", "polling" ],
+    transports: [ "websocket" ],
     cors: {
       origin: "https://admin.socket.io"
     }
@@ -83,6 +83,7 @@ function start() {
   instrument(io, {
     auth: false,
     mode: "development",
+    namespaceName: "/admin"
   });
 
   logger.info(`Listening on PORT: ${PORT} serverID: ${SERVERID}`);
