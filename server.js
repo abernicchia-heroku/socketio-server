@@ -5,6 +5,8 @@
 import { Server } from "socket.io";
 import { createAdapter } from "@socket.io/redis-adapter";
 import { createClient } from "redis";
+import { instrument } from "@socket.io/admin-ui";
+
 import throng from "throng";
 import winston from "winston";
 
@@ -73,6 +75,11 @@ function start() {
           sequenceNumberByClient.delete(socket);
           logger.info(`Client disconnected [id=${socket.id}] serverID: ${SERVERID} clients: ${sequenceNumberByClient.size}`);
       });
+  });
+
+  instrument(io, {
+    auth: false,
+    mode: "development",
   });
 
   logger.info(`Listening on PORT: ${PORT} serverID: ${SERVERID}`);
