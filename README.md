@@ -63,7 +63,7 @@ You can test your server using any socket.io compatible client like this compoun
 
 Every SERVER2CLIENT_MESSAGE_INTERVAL_MSECS the server sends to each client connected its own sequential number (**seq-num** event), increased by 1 at each delivery, and starting from 1 once the client connects (e.g. 1, 2, 3 ...).
 
-Every BROADCAST_MESSAGE_INTERVAL_MSECS the server broadcast the same message (**s2c-event** event) to all clients connected inlcuding the server identifier in the payload.
+Every BROADCAST_MESSAGE_INTERVAL_MSECS the server broadcasts the same message (**s2c-event** event) to all clients connected inlcuding the server identifier in the payload.
 
 The server listens for **c2s-event** from clients and responds back emitting a **s2c-event** event including the original payload received from the client.
 
