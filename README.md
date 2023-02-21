@@ -69,6 +69,10 @@ The server listens for **c2s-event** from clients and responds back emitting a *
 
 It's possible to enable debug messages (e.g. when events are emitted or received) setting LOG_LEVEL=debug.
 
+## Admin UI
+
+The server is instrumented in development mode to support socket.io [Admin UI](https://socket.io/docs/v4/admin-ui/) then using the hosted version at https://admin.socket.io/, it's possible to have access to an administrative console. When the connection modal appears, enter the URL of your server (e.g. https://example.com) without credentials (authentication is disabled), toggle "Advanced options" and "WebSocket only?" then click "Connect".
+
 
 
 
