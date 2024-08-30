@@ -55,7 +55,7 @@ The following configuration variables are used by the application:
 
 **BROADCAST_MESSAGE_INTERVAL_MSECS**: Broadcast events frequency in milliseconds.
 
-**FORCE_CLIENT_DISCONNECTION**: Enable/disable forced client disconnection after FORCE_CLIENT_DISCONNECTION.
+**FORCE_CLIENT_DISCONNECTION**: Enable/disable forced client disconnection after CLIENT_DISCONNECT_INTERVAL_MSECS.
 
 **CLIENT_DISCONNECT_INTERVAL_MSECS**: See FORCE_CLIENT_DISCONNECTION.
 
