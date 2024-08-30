@@ -65,6 +65,8 @@ Every SERVER2CLIENT_MESSAGE_INTERVAL_MSECS the server sends to each client conne
 
 Every BROADCAST_MESSAGE_INTERVAL_MSECS the server broadcasts the same message (**s2c-event** event) to all clients connected inlcuding the server identifier in the payload.
 
+Setting FORCE_CLIENT_DISCONNECTION to true (default = false) it's possible to force clients disconnection after CLIENT_DISCONNECT_INTERVAL_MSECS.
+
 The server listens for **c2s-event** from clients and responds back emitting a **s2c-event** event including the original payload received from the client.
 
 It's possible to enable debug messages (e.g. when events are emitted or received) setting LOG_LEVEL=debug.
