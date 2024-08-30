@@ -17,6 +17,10 @@ const SERVERID = `${CONTAINERNAME}-` + Math.floor(Math.random() * 1000000);
 
 const SERVER2CLIENT_MESSAGE_INTERVAL_MSECS = process.env.SERVER2CLIENT_MESSAGE_INTERVAL_MSECS || 1000;
 const BROADCAST_MESSAGE_INTERVAL_MSECS = process.env.BROADCAST_MESSAGE_INTERVAL_MSECS || 5000;
+const CLIENT_DISCONNECT_INTERVAL_MSECS = process.env.CLIENT_DISCONNECT_INTERVAL_MSECS || 20000;
+const FORCE_CLIENT_DISCONNECTION = process.env.FORCE_CLIENT_DISCONNECTION || false;
+
+
 
 const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || 'info',
@@ -67,6 +71,15 @@ function start() {
       // initialize this client's sequence number
       sequenceNumberByClient.set(socket, 1);
       logger.info(`Client connected [id=${socket.id}] serverID: ${SERVERID} clients: ${sequenceNumberByClient.size}`);
+
+      if (FORCE_CLIENT_DISCONNECTION) {
+        // force client disconnection
+        setTimeout(() => {
+          logger.debug(`Forcing client disconnection from server ... ${socket.id}`);
+          sequenceNumberByClient.delete(socket);
+          socket.disconnect(true); // closes the underlying connection
+        }, CLIENT_DISCONNECT_INTERVAL_MSECS);
+      }
 
       socket.on("c2s-event", (data) => {
           logger.debug(`client2server event [id=${socket.id}] data: ${data}`);
