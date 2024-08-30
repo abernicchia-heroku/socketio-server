@@ -55,6 +55,10 @@ The following configuration variables are used by the application:
 
 **BROADCAST_MESSAGE_INTERVAL_MSECS**: Broadcast events frequency in milliseconds.
 
+**FORCE_CLIENT_DISCONNECTION**: Enable/disable forced client disconnection after FORCE_CLIENT_DISCONNECTION.
+
+**CLIENT_DISCONNECT_INTERVAL_MSECS**: See FORCE_CLIENT_DISCONNECTION.
+
 **WEB_CONCURRENCY**: The number of processes / socket.io servers to run within the same dyno. This configuration variable can be omitted as it's automatically set by Heroku based on the dyno tier in use (see [Tuning the concurrency level](https://devcenter.heroku.com/articles/node-concurrency#tuning-the-concurrency-level))
 
 ## Test
